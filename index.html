@@ -22,9 +22,6 @@
       flex-wrap: wrap;
       gap: 15px;
     }
-    .favorites img {
-      width: 150px;
-    }
   </style>
   <body>
     <div id="app"></div>
@@ -51,52 +48,57 @@
 
       const title = <h1>1번째 고양이 가라사대</h1>;
 
-      const form = (
-        <form>
-          <input
-            type="text"
-            name="name"
-            placeholder="영어 대사를 입력해주세요"
-          />
-          <button type="submit">생성</button>
-        </form>
-      );
+      const Title = (props) => {
+        console.log(props);
+        return <h1>{props.children}</h1>;
+      };
 
-      const catItem = (
-        <li>
-          <img src="https://cataas.com/cat/18MD6byVC1yKGpXp/says/JavaScript"></img>
-        </li>
-      );
+      const Form = () => {
+        return (
+          <form>
+            <input
+              type="text"
+              name="name"
+              placeholder="영어 대사를 입력해주세요"
+            />
+            <button type="submit">생성</button>
+          </form>
+        );
+      };
 
-      const mainCard = (
-        <div class="main-card">
-          <img
-            src="https://cataas.com/cat/HSENVDU4ZMqy7KQ0/says/react"
-            alt="고양이"
-            width="400"
-          />
-          <button>🤍</button>
-        </div>
-      );
+      const CatItem = (props) => {
+        return (
+          <li>
+            <img src={props.img} style={{ width: "150px" }} />
+          </li>
+        );
+      };
 
-      const FOO = "hello world";
+      const Favorites = () => {
+        return (
+          <ul className="favorites">
+            <CatItem img="https://cataas.com/cat/BxqL2EjFmtxDkAm2/says/inflearn" />
+            <CatItem img="https://cataas.com/cat/18MD6byVC1yKGpXp/says/JavaScript" />
+          </ul>
+        );
+      };
 
-      const favorites = (
-        <ul class="favorites">
-          {FOO === "hello world" ? "true" : "false"}
-          {catItem}
-          {catItem}
-          {catItem}
-        </ul>
-      );
+      const MainCard = ({ img }) => {
+        return (
+          <div className="main-card">
+            <img src={img} alt="고양이" width="400" />
+            <button>🤍</button>
+          </div>
+        );
+      };
 
       // react는 최상위 태그가 하나여야 함
       const container = (
         <div>
-          {title}
-          {form}
-          {mainCard}
-          {favorites}
+          <Title>1번째 고양이 가라사대</Title>
+          <Form />
+          <MainCard img="https://cataas.com/cat/HSENVDU4ZMqy7KQ0/says/react" />
+          <Favorites />
         </div>
       );
 
