@@ -46,16 +46,14 @@
 
       const app = get("#app");
 
-      const title = <h1>1번째 고양이 가라사대</h1>;
-
       const Title = (props) => {
         console.log(props);
         return <h1>{props.children}</h1>;
       };
 
-      const Form = () => {
+      const Form = ({ handleFormSubmit }) => {
         return (
-          <form>
+          <form onSubmit={handleFormSubmit}>
             <input
               type="text"
               name="name"
@@ -84,25 +82,48 @@
       };
 
       const MainCard = ({ img }) => {
+        function handleHeartClick() {
+          console.log("하트눌렀음");
+        }
+        function handleHeartMouseOver() {
+          console.log("하트스쳐지나감");
+        }
+
         return (
           <div className="main-card">
             <img src={img} alt="고양이" width="400" />
-            <button>🤍</button>
+            <button
+              onClick={handleHeartClick}
+              onMouseOver={handleHeartMouseOver}
+            >
+              🤍
+            </button>
           </div>
         );
       };
 
       // react는 최상위 태그가 하나여야 함
-      const container = (
-        <div>
-          <Title>1번째 고양이 가라사대</Title>
-          <Form />
-          <MainCard img="https://cataas.com/cat/HSENVDU4ZMqy7KQ0/says/react" />
-          <Favorites />
-        </div>
-      );
+      const Container = () => {
+        const [counter, setCounter] = React.useState(1);
+        console.log("카운터", counter);
 
-      ReactDOM.render(container, app);
+        function handleFormSubmit(e) {
+          e.preventDefault();
+          console.log("form 전송됨");
+          setCounter(counter + 1);
+        }
+
+        return (
+          <div>
+            <Title>{counter}번째 고양이 가라사대</Title>
+            <Form handleFormSubmit={handleFormSubmit} />
+            <MainCard img="https://cataas.com/cat/HSENVDU4ZMqy7KQ0/says/react" />
+            <Favorites />
+          </div>
+        );
+      };
+
+      ReactDOM.render(<Container />, app);
     </script>
   </body>
 </html>
