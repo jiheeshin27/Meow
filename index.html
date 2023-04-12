@@ -50,14 +50,43 @@
         return <h1>{props.children}</h1>;
       };
 
-      const Form = ({ handleFormSubmit }) => {
+      const Form = ({ updateMainCat }) => {
+        const [value, setValue] = React.useState("");
+        const [errorMessage, setErrorMessage] = React.useState("");
+
+        const includesHangul = (text) => /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/i.test(text);
+
+        function handleInputChange(e) {
+          const userValue = e.target.value;
+          console.log(includesHangul(userValue));
+          setErrorMessage("");
+          if (includesHangul(userValue)) {
+            setErrorMessage("한글은 입력하실 수 없습니다.");
+          }
+          setValue(userValue.toUpperCase());
+        }
+
+        function handleFormSubmit(e) {
+          e.preventDefault();
+          setErrorMessage("");
+
+          if (value === "") {
+            setErrorMessage("빈 값으로 만들 수 없습니다.");
+            return;
+          }
+          updateMainCat();
+        }
+
         return (
           <form onSubmit={handleFormSubmit}>
             <input
               type="text"
               name="name"
               placeholder="영어 대사를 입력해주세요"
+              value={value}
+              onChange={handleInputChange}
             />
+            <p style={{ color: "red" }}>{errorMessage}</p>
             <button type="submit">생성</button>
           </form>
         );
@@ -71,65 +100,56 @@
         );
       };
 
-      const Favorites = () => {
-        const CAT1 = "https://cataas.com/cat/HSENVDU4ZMqy7KQ0/says/react";
-        const CAT2 = "https://cataas.com/cat/BxqL2EjFmtxDkAm2/says/meow";
-        const CAT3 = "https://cataas.com/cat/18MD6byVC1yKGpXp/says/JavaScript";
-        const cats = [CAT1, CAT2];
+      const Favorites = ({ favorites }) => {
         // 리스트 요소는 unique한 Key값을 가지고 있어야 한다.
         return (
           <ul className="favorites">
-            {cats.map((cat) => (
+            {favorites.map((cat) => (
               <CatItem img={cat} key={cat} />
             ))}
           </ul>
         );
       };
 
-      const MainCard = ({ img }) => {
-        function handleHeartClick() {
-          console.log("하트눌렀음");
-        }
-        function handleHeartMouseOver() {
-          console.log("하트스쳐지나감");
-        }
-
+      const MainCard = ({ img, onHeartClick }) => {
         return (
           <div className="main-card">
             <img src={img} alt="고양이" width="400" />
-            <button
-              onClick={handleHeartClick}
-              onMouseOver={handleHeartMouseOver}
-            >
-              🤍
-            </button>
+            <button onClick={onHeartClick}>🤍</button>
           </div>
         );
       };
 
       // react는 최상위 태그가 하나여야 함
       const App = () => {
+        // n 번째 상태관리
         const [counter, setCounter] = React.useState(1);
-        console.log("카운터", counter);
 
-        // ----
-        const [mainCat, setMainCat] = React.useState(
-          "https://cataas.com/cat/HSENVDU4ZMqy7KQ0/says/react"
-        );
+        const CAT1 = "https://cataas.com/cat/HSENVDU4ZMqy7KQ0/says/react";
+        const CAT2 = "https://cataas.com/cat/BxqL2EjFmtxDkAm2/says/meow";
+        const CAT3 = "https://cataas.com/cat/18MD6byVC1yKGpXp/says/JavaScript";
+        const cats = [CAT1, CAT2, CAT3];
 
-        function handleFormSubmit(e) {
-          e.preventDefault();
-          console.log("form 전송됨");
+        // 고양이 image 상태관리
+        const [mainCat, setMainCat] = React.useState(CAT1);
+        // favorites list 상태관리
+        const [favorites, setFavorites] = React.useState([CAT1, CAT2]);
+
+        function updateMainCat(e) {
+          setMainCat(CAT2);
           setCounter(counter + 1);
-          setMainCat("https://cataas.com/cat/BxqL2EjFmtxDkAm2/says/changed");
+        }
+
+        function handleHeartClick() {
+          setFavorites([...favorites, CAT3]);
         }
 
         return (
           <div>
             <Title>{counter}번째 고양이 가라사대</Title>
-            <Form handleFormSubmit={handleFormSubmit} />
-            <MainCard img={mainCat} />
-            <Favorites />
+            <Form updateMainCat={updateMainCat} />
+            <MainCard img={mainCat} onHeartClick={handleHeartClick} />
+            <Favorites favorites={favorites} />
           </div>
         );
       };
