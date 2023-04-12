@@ -40,6 +40,15 @@
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 
     <script type="text/babel">
+      const jsonLocalStorage = {
+        setItem: (key, value) => {
+          localStorage.setItem(key, JSON.stringify(value));
+        },
+        getItem: (key) => {
+          return JSON.parse(localStorage.getItem(key));
+        },
+      };
+
       const get = (el) => {
         return document.querySelector(el);
       };
@@ -122,8 +131,10 @@
 
       // react는 최상위 태그가 하나여야 함
       const App = () => {
-        // n 번째 상태관리
-        const [counter, setCounter] = React.useState(1);
+        // counter 상태관리
+        const [counter, setCounter] = React.useState(
+          jsonLocalStorage.getItem("counter") || 0
+        );
 
         const CAT1 = "https://cataas.com/cat/HSENVDU4ZMqy7KQ0/says/react";
         const CAT2 = "https://cataas.com/cat/BxqL2EjFmtxDkAm2/says/meow";
@@ -133,15 +144,21 @@
         // 고양이 image 상태관리
         const [mainCat, setMainCat] = React.useState(CAT1);
         // favorites list 상태관리
-        const [favorites, setFavorites] = React.useState([CAT1, CAT2]);
+        const [favorites, setFavorites] = React.useState(
+          jsonLocalStorage.getItem("favorites") || []
+        );
 
         function updateMainCat(e) {
           setMainCat(CAT2);
-          setCounter(counter + 1);
+          const nextCounter = counter + 1;
+          setCounter(nextCounter);
+          jsonLocalStorage.setItem("counter", nextCounter);
         }
 
         function handleHeartClick() {
-          setFavorites([...favorites, CAT3]);
+          const nextFavorites = [...favorites, mainCat];
+          setFavorites(nextFavorites);
+          jsonLocalStorage.setItem("favorites", nextFavorites);
         }
 
         return (
