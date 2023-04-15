@@ -49,6 +49,15 @@
         },
       };
 
+      const fetchCat = async (text) => {
+        const OPEN_API_DOMAIN = "https://cataas.com";
+        const response = await fetch(
+          `${OPEN_API_DOMAIN}/cat/says/${text}?json=true`
+        );
+        const responseJson = await response.json();
+        return `${OPEN_API_DOMAIN}/${responseJson.url}`;
+      };
+
       const get = (el) => {
         return document.querySelector(el);
       };
@@ -83,7 +92,7 @@
             setErrorMessage("빈 값으로 만들 수 없습니다.");
             return;
           }
-          updateMainCat();
+          updateMainCat(value);
         }
 
         return (
@@ -148,8 +157,9 @@
           jsonLocalStorage.getItem("favorites") || []
         );
 
-        function updateMainCat(e) {
-          setMainCat(CAT2);
+        async function updateMainCat(value) {
+          const newCat = await fetchCat(value);
+          setMainCat(newCat);
           const nextCounter = counter + 1;
           setCounter(nextCounter);
           jsonLocalStorage.setItem("counter", nextCounter);
@@ -170,7 +180,7 @@
           </div>
         );
       };
-      // --ß
+
       ReactDOM.render(<App />, app);
     </script>
   </body>
